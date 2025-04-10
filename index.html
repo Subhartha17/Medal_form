@@ -3,67 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mutually Exclusive Selection Form</title>
+  <title>CTdUG: Indoor Medal Ceremony 2024-25</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
       margin: 40px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
     }
     label {
       display: block;
       margin-top: 20px;
       font-weight: bold;
     }
-    select {
+    select, input[type="password"] {
       width: 100%;
       padding: 10px;
       font-size: 1em;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
     }
     button {
-      margin-top: 30px;
+      display: block;
+      margin: 30px auto;
       padding: 10px 20px;
       font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: white;
       cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .form-group {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    #formSection {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Mutually Exclusive Selection Form</h1>
-  <form id="exclusiveForm">
-    <label for="q1">Select for Question 1</label>
-    <select id="q1"></select>
+  <h1>CTdUG: Indoor Medal Ceremony 2024-25</h1>
+  <div class="form-group">
+    <label for="password">Enter your unique password:</label>
+    <input type="password" id="password" />
+    <button onclick="checkPassword()">Enter</button>
+  </div>
 
-    <label for="q2">Select for Question 2</label>
-    <select id="q2"></select>
+  <div id="formSection">
+    <form id="exclusiveForm" class="form-group">
+      <label for="q1">Select for Question 1</label>
+      <select id="q1"></select>
 
-    <label for="q3">Select for Question 3</label>
-    <select id="q3"></select>
+      <label for="q2">Select for Question 2</label>
+      <select id="q2"></select>
 
-    <button type="submit">Submit</button>
-  </form>
+      <label for="q3">Select for Question 3</label>
+      <select id="q3"></select>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
 
   <script>
-    const options = [
-      "Sarthak Banerjee",
-      "Aadarsh Sankarlinkam",
-      "KABILAN SARALA VIJAYAKUMAR",
-      "Thomas Sicking",
-      "STEPHIN GEORGE",
-      "Subhartha Sarkar",
-      "Sudip Mandal",
-      "Piklu Mallick",
-      "Navdeep Rana",
-      "VIGNESH GNANASKANDAN",
-      "DR. SHUJAUT HUSSAIN BADER",
-      "Saad Akram",
-      "Esmatullah Rawan",
-      "Vamsi Golla",
-      "KUNAL RAIKAR",
-      "SAJU BALAKRISHNAN",
-      "Manvendra Singh",
-      "Zeeshan Ali"
-    ];
+    const validPasswords = {
+      "pass1": "Sarthak Banerjee",
+      "pass2": "Aadarsh Sankarlinkam",
+      "pass3": "KABILAN SARALA VIJAYAKUMAR",
+      "pass4": "Thomas Sicking",
+      "pass5": "STEPHIN GEORGE",
+      "pass6": "Subhartha Sarkar",
+      "pass7": "Sudip Mandal",
+      "pass8": "Piklu Mallick",
+      "pass9": "Navdeep Rana",
+      "pass10": "VIGNESH GNANASKANDAN",
+      "pass11": "DR. SHUJAUT HUSSAIN BADER",
+      "pass12": "Saad Akram",
+      "pass13": "Esmatullah Rawan",
+      "pass14": "Vamsi Golla",
+      "pass15": "KUNAL RAIKAR",
+      "pass16": "SAJU BALAKRISHNAN",
+      "pass17": "Manvendra Singh",
+      "pass18": "Zeeshan Ali"
+    };
 
+    let usedPasswords = JSON.parse(localStorage.getItem("usedPasswords")) || [];
+    let currentUser = "";
+
+    function checkPassword() {
+      const input = document.getElementById("password").value;
+      if (usedPasswords.includes(input)) {
+        alert("This password has already been used.");
+        return;
+      }
+      if (validPasswords[input]) {
+        currentUser = input;
+        document.querySelector(".form-group").style.display = "none";
+        document.getElementById("formSection").style.display = "block";
+      } else {
+        alert("Invalid password. Please try again.");
+      }
+    }
+
+    const options = Object.values(validPasswords);
     const selects = [
       document.getElementById("q1"),
       document.getElementById("q2"),
@@ -107,7 +158,28 @@
         alert("Please make unique selections in all three questions.");
         return;
       }
-      alert("Form submitted with:\n" + values.join("\n"));
+      fetch("https://script.google.com/macros/s/AKfycbwMUqJ2aERKsNY7Zmbyp3htlLENJB8eyPszBfKu_wbleq9rPOQRWeLc-WgyayfNsSJCYQ/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          password: currentUser,
+          q1: values[0],
+          q2: values[1],
+          q3: values[2]
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(response => response.text())
+      .then(data => {
+        usedPasswords.push(currentUser);
+        localStorage.setItem("usedPasswords", JSON.stringify(usedPasswords));
+        alert("Your response has been recorded!");
+      })
+      .catch(error => {
+        console.error("Submission failed:", error);
+        alert("Failed to submit. Please try again.");
+      });
     });
   </script>
 </body>
