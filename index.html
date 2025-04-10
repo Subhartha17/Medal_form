@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mutually Exclusive Selection Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mutually Exclusive Selection Form</h1>
+  <form id="exclusiveForm">
+    <label for="q1">Select for Question 1</label>
+    <select id="q1"></select>
+
+    <label for="q2">Select for Question 2</label>
+    <select id="q2"></select>
+
+    <label for="q3">Select for Question 3</label>
+    <select id="q3"></select>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const options = [
+      "Sarthak Banerjee",
+      "Aadarsh Sankarlinkam",
+      "KABILAN SARALA VIJAYAKUMAR",
+      "Thomas Sicking",
+      "STEPHIN GEORGE",
+      "Subhartha Sarkar",
+      "Sudip Mandal",
+      "Piklu Mallick",
+      "Navdeep Rana",
+      "VIGNESH GNANASKANDAN",
+      "DR. SHUJAUT HUSSAIN BADER",
+      "Saad Akram",
+      "Esmatullah Rawan",
+      "Vamsi Golla",
+      "KUNAL RAIKAR",
+      "SAJU BALAKRISHNAN",
+      "Manvendra Singh",
+      "Zeeshan Ali"
+    ];
+
+    const selects = [
+      document.getElementById("q1"),
+      document.getElementById("q2"),
+      document.getElementById("q3")
+    ];
+
+    function populateAllSelects() {
+      selects.forEach(select => {
+        select.innerHTML = '<option value="">-- Select an option --</option>';
+        options.forEach(option => {
+          const opt = document.createElement("option");
+          opt.value = option;
+          opt.textContent = option;
+          select.appendChild(opt);
+        });
+      });
+    }
+
+    function updateSelects(changedSelect) {
+      const selectedValues = selects.map(s => s.value);
+      selects.forEach(select => {
+        const currentValue = select.value;
+        Array.from(select.options).forEach(option => {
+          if (option.value === "") return;
+          option.disabled = selectedValues.includes(option.value) && select.value !== option.value;
+        });
+        select.value = currentValue;
+      });
+    }
+
+    populateAllSelects();
+
+    selects.forEach(select => {
+      select.addEventListener("change", () => updateSelects(select));
+    });
+
+    document.getElementById("exclusiveForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const values = selects.map(s => s.value);
+      if (new Set(values).size !== values.length || values.includes("")) {
+        alert("Please make unique selections in all three questions.");
+        return;
+      }
+      alert("Form submitted with:\n" + values.join("\n"));
+    });
+  </script>
+</body>
+</html>
